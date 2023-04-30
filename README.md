@@ -1,5 +1,7 @@
 # DB Report Generator
 
+Generate a report from a database using AI prompts.
+
 ## How to run
 ```bash
 make dev
