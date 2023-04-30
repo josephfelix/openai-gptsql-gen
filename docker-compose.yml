@@ -1,0 +1,36 @@
+version: '3'
+services:
+  database:
+    image: mysql:5
+    restart: always
+    command: >
+            --character-set-server=utf8mb4
+            --collation-server=utf8mb4_bin
+            --innodb_file_format=barracuda
+            --innodb_file_per_table=On
+            --innodb_large_prefix=On
+    volumes:
+      - ./provision:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=dbreport
+    networks:
+      - dbreport_network
+
+  embeddings:
+    build: .
+    working_dir: /app
+    depends_on:
+      - database
+    networks:
+      - dbreport_network
+    environment:
+    - WAIT_HOSTS=database:3306
+    - WAIT_HOSTS_TIMEOUT=300
+    - WAIT_SLEEP_INTERVAL=30
+    - WAIT_HOST_CONNECT_TIMEOUT=30
+
+networks:
+  dbreport_network:
+    driver: bridge
