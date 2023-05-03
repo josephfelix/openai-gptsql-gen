@@ -22,9 +22,6 @@ DATABASE_PORT = os.getenv('DATABASE_PORT')
 DATABASE_USER = os.getenv('DATABASE_USER')
 DATABASE_PASS = os.getenv('DATABASE_PASS')
 DATABASE_DB = os.getenv('DATABASE_DB')
-if not DATABASE_HOST:
-    print('Please set DATABASE_HOST in .env file.')
-    sys.exit(1)
 
 if os.getenv('OPENAI_TOKEN'):
     openai.api_key = os.getenv('OPENAI_TOKEN')
