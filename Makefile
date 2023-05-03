@@ -2,7 +2,6 @@ DOCKERCOMPOSE ?= $(shell which docker-compose)
 DATABASE = $(shell which psql)
 
 run:
-	$(DOCKERCOMPOSE) down
 	$(DOCKERCOMPOSE) up
 
 database:
