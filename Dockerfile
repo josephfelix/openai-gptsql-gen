@@ -18,13 +18,11 @@ RUN apt-get update -qq && apt-get install -y \
 # Copy the current directory contents into the container at /app
 COPY . .
 
-# Add docker-compose-wait tool -------------------
-ENV WAIT_VERSION 2.7.2
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERSION/wait /wait
-RUN chmod +x /wait
-
 # Run pip install
 RUN pip install -r requirements.txt
 
-# Run embeddings.py when the container launches
-CMD ["sh", "-c", "/wait && python /app/src/embeddings.py"]
+# Give permission to wait.sh
+RUN chmod 755 /app/wait.sh
+
+# Run app.py when the container launches
+CMD ["sh", "-c", "/app/wait.sh && python /app/app.py"]

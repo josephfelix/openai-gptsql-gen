@@ -1,29 +1,24 @@
-# DB Report Generator
+# GPT SQL Query Generator
 
-Generate a report from a database using AI prompts.
+This is simple python application to generate SQL Database queries using GPT-3 from OpenAI.
+
+## How it works:
+1. Getting SQL schemas from MySQL and compile prompt from SQL Schema
+3. Wait for user input
+4. Generate SQL query from prompt + user input
+5. Show SQL query and ask user to confirm or edit if it is correct before executing it
+6. Execute SQL query and show results in a table
+
+## Environment
+- DATABASE_HOST: MySQL database URL
+- DATABASE_PORT: MySQL database port
+- DATABASE_USER: MySQL database user
+- DATABASE_PASS: MySQL database password
+- DATABASE_DB: MySQL database name
+- OPENAI_TOKEN: OpenAI API token (Not nessessary, you can set it in the UI)
+- APP_PORT: Port to run the application (default: 5000)
+- OPENAI_ENGINE: OpenAI engine to use (default: text-davinci-003, not nessessary). You can set some free to use model: text-chat-davinci-002-20221122
 
 ## How to run
-```bash
-make dev
-```
-
-## Connect to MySQL database to get embeddings
-```bash
-make database
-```
-
-After connecting to the database, you can run the following query to get the embeddings:
-```sql
-SELECT * FROM embeddings\G
-```
-
-## Generate embeddings
-Connect to the database and run the following query:
-```sql
-TRUNCATE TABLE embeddings;
-```
-
-Then run the following command:
-```bash
-make embedding
-```
+1. Set environment variables in `.env` file in project root or in your system
+4. Run the application using `make run` and open `http://localhost:5000` in your browser

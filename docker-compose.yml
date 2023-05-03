@@ -18,18 +18,16 @@ services:
     networks:
       - dbreport_network
 
-  embeddings:
+  app:
     build: .
+    restart: always
     working_dir: /app
     depends_on:
       - database
+    ports:
+      - "5000:5000"
     networks:
       - dbreport_network
-    environment:
-    - WAIT_HOSTS=database:3306
-    - WAIT_HOSTS_TIMEOUT=300
-    - WAIT_SLEEP_INTERVAL=30
-    - WAIT_HOST_CONNECT_TIMEOUT=30
 
 networks:
   dbreport_network:

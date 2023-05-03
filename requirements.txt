@@ -4,3 +4,5 @@ openai==0.27.5
 mysql==0.0.3
 mysqlclient==2.1.1
 mysql-connector-python-rf==2.2.2
+python-dotenv==1.0.0
+flask==2.2.2
