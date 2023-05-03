@@ -21,4 +21,4 @@ This is simple python application to generate SQL Database queries using GPT-3 f
 
 ## How to run
 1. Set environment variables in `.env` file in project root or in your system
-4. Run the application using `make run` and open `http://localhost:5000` in your browser
+2. Run the application using `make run` and open `http://localhost:5000` in your browser
