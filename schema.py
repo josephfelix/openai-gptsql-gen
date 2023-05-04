@@ -59,7 +59,8 @@ INNER JOIN INFORMATION_SCHEMA.COLUMNS c
         ON t.TABLE_NAME = c.TABLE_NAME 
             AND t.TABLE_SCHEMA = c.TABLE_SCHEMA
 WHERE
-    c.COLUMN_COMMENT <> '';""")
+    c.COLUMN_COMMENT <> ''
+    AND t.TABLE_SCHEMA NOT IN ('performance_schema', 'mysql');""")
         comments = self.cur.fetchall()
         self.comments = comments
         return comments
