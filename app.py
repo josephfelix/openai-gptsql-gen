@@ -22,17 +22,20 @@ DATABASE_PORT = os.getenv('DATABASE_PORT')
 DATABASE_USER = os.getenv('DATABASE_USER')
 DATABASE_PASS = os.getenv('DATABASE_PASS')
 DATABASE_DB = os.getenv('DATABASE_DB')
+DEBUG_MODE = (os.getenv('DEBUG_MODE').lower() == 'true') or False
 
 if os.getenv('OPENAI_TOKEN'):
     openai.api_key = os.getenv('OPENAI_TOKEN')
 
 if not openai.api_key:
-    print('Please set OPENAI_TOKEN in .env file or set token in UI') # Not a critical error
+    # Not a critical error
+    print('Please set OPENAI_TOKEN in .env file or set token in UI')
 
 # Generate SQL Schema from MySQL
 schema = Schema()
 sql_schema, json_data = schema.index()
 print('SQL data was generated successfully.')
+
 
 def load_prompt(name: str) -> str:
     """Load prompt from file"""
@@ -40,12 +43,14 @@ def load_prompt(name: str) -> str:
         return file.read()
 
 # Middleware to check key in request or in .env file
+
+
 @app.before_request
-def get_key():  
+def get_key():
     """Get API key from request or .env file"""
     if (request.content_type != 'application/json'
         or request.method != 'POST'
-        or request.path == '/run'):
+            or request.path == '/run'):
         return
     content = request.json
     if not content['api_key'] and not openai.api_key:
@@ -59,6 +64,7 @@ def get_key():
     else:
         request.api_key = os.getenv('OPENAI_TOKEN')
 
+
 @app.get('/')
 def index():
     """Show SQL Schema + prompt to ask GPT-3 to generate SQL queries"""
@@ -69,6 +75,7 @@ def index():
         sql_schema=sql_schema,
         json_data=normalized_json_data
     )
+
 
 @app.post('/generate')
 def generate():
@@ -84,7 +91,8 @@ def generate():
 
         openai.api_key = request.api_key
         regen_schema = schema.regen(selected)
-        fprompt = load_prompt('sql').replace('{regen_schema}', regen_schema).replace('{user_input}', user_input)
+        fprompt = load_prompt('sql').replace(
+            '{regen_schema}', regen_schema).replace('{user_input}', user_input)
         # Edit prompt on the fly by editing prompts/sql.txt
         print(f'Final prompt: {fprompt}')
 
@@ -120,6 +128,7 @@ def generate():
             'error': str(err)
         }
 
+
 @app.post('/run')
 def execute():
     """Execute SQL query and show results in a table"""
@@ -143,7 +152,8 @@ def execute():
 
         # Return json with all columns names and results
         columns = [desc[0] for desc in cur.description]
-        transform = lambda item: item.decode() if type(item) is bytearray else item
+        def transform(item): return item.decode() if type(
+            item) is bytearray else item
         results = [map(transform, item) for item in results]
         results = [dict(zip(columns, row)) for row in results]
         seconds_elapsed = time.time() - ts_start
@@ -166,6 +176,7 @@ def execute():
             'error': str(err)
         }
 
+
 @app.post('/generate_prompt')
 def generate_prompt():
     """Generate prompt from selected tables"""
@@ -178,7 +189,8 @@ def generate_prompt():
 
         # Update prompt
         regen_schema = schema.regen(selected)
-        final_prompt = load_prompt('idk').replace('{regen_schema}', regen_schema)
+        final_prompt = load_prompt('idk').replace(
+            '{regen_schema}', regen_schema)
         print(f'Final prompt: {final_prompt}')
 
         gpt_response = openai.Completion.create(
@@ -210,6 +222,7 @@ def generate_prompt():
             'error': str(err)
         }
 
+
 # Run web app
 if __name__ == '__main__':
-    app.run(debug=False, port=int(APP_PORT), host="0.0.0.0")
+    app.run(debug=DEBUG_MODE, port=int(APP_PORT), host="0.0.0.0")
